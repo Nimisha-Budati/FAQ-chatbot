@@ -1,34 +1,18 @@
 [
   {
-    "question": "what courses do you offer",
-    "answer": "We offer Web Development, AI and Data Science courses."
+    "question": "What is your return policy?",
+    "answer": "You can return products within 30 days."
   },
   {
-    "question": "how can i contact support",
-    "answer": "You can contact us at support@example.com."
+    "question": "How can I contact support?",
+    "answer": "Contact us at support@example.com."
   },
   {
-    "question": "do you provide certificates",
-    "answer": "Yes, certificates are provided after successful course completion."
+    "question": "Do you offer refunds?",
+    "answer": "Yes, refunds are available within 30 days."
   },
   {
-    "question": "what are your working hours",
-    "answer": "Our support team is available from 9 AM to 6 PM."
-  },
-  {
-    "question": "where are you located",
-    "answer": "We operate online and serve students worldwide."
-  },
-  {
-    "question": "how can i enroll",
-    "answer": "You can enroll through our website by selecting your preferred course."
-  },
-  {
-    "question": "is there any refund policy",
-    "answer": "Yes, refunds are available within 7 days of enrollment."
-  },
-  {
-    "question": "what payment methods do you accept",
-    "answer": "We accept UPI, credit cards, debit cards and net banking."
+    "question": "What are your working hours?",
+    "answer": "We are available from 9 AM to 6 PM."
   }
 ]

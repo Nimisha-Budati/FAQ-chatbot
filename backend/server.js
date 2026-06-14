@@ -1,93 +1,53 @@
 const express = require("express");
 const cors = require("cors");
-const fs = require("fs");
 
 const app = express();
-const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
 
-const faqs = require("./faq.json");
+const faq = require("./faq.json");
 
-// Chat API
 app.post("/chat", (req, res) => {
-  const message = req.body.message.toLowerCase().trim();
+    try {
+        const userMessage = req.body.message?.toLowerCase().trim();
 
-  // Greetings
-  const greetings = [
-    "hi",
-    "hii",
-    "hello",
-    "hloo",
-    "hey",
-    "good morning",
-    "good afternoon",
-    "good evening"
-  ];
+        if (!userMessage) {
+            return res.json({
+                answer: "Please enter a question."
+            });
+        }
 
-  if (greetings.includes(message)) {
-    return res.json({
-      answer: "Hello! 👋 How can I help you today?"
-    });
-  }
+        const found = faq.find(item =>
+            item.question.toLowerCase().includes(userMessage) ||
+            userMessage.includes(item.question.toLowerCase())
+        );
 
-  // Thanks
-  const thanks = [
-    "thanks",
-    "thank you",
-    "thankyou",
-    "thx"
-  ];
+        if (found) {
+            return res.json({
+                answer: found.answer
+            });
+        }
 
-  if (thanks.includes(message)) {
-    return res.json({
-      answer: "You're welcome! 😊"
-    });
-  }
+        return res.json({
+            answer: "Sorry, I don't know the answer to that question yet."
+        });
 
-  // FAQ Matching
-  const faq = faqs.find(item =>
-    message.includes(item.question)
-  );
+    } catch (error) {
+        console.error(error);
 
-  if (faq) {
-    return res.json({
-      answer: faq.answer
-    });
-  }
-
-  // Save unanswered questions
-  const unansweredQuestion = {
-    question: message,
-    time: new Date().toLocaleString()
-  };
-
-  let unanswered = [];
-
-  try {
-    if (fs.existsSync("unanswered.json")) {
-      unanswered = JSON.parse(
-        fs.readFileSync("unanswered.json")
-      );
+        return res.json({
+            answer: "Something went wrong. Please try again."
+        });
     }
-  } catch (err) {
-    console.log(err);
-  }
-
-  unanswered.push(unansweredQuestion);
-
-  fs.writeFileSync(
-    "unanswered.json",
-    JSON.stringify(unanswered, null, 2)
-  );
-
-  return res.json({
-    answer:
-      "Sorry, I don't know the answer yet. Your question has been saved for future improvement."
-  });
 });
 
+app.get("/", (req, res) => {
+    res.send("FAQ Chatbot Backend Running");
+});
+
+const PORT = 5000;
+
 app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
