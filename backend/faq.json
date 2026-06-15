@@ -1,18 +1,18 @@
 [
   {
-    "question": "What is your return policy?",
+    "keywords": ["return", "returns", "return policy"],
     "answer": "You can return products within 30 days."
   },
   {
-    "question": "How can I contact support?",
-    "answer": "Contact us at support@example.com."
-  },
-  {
-    "question": "Do you offer refunds?",
+    "keywords": ["refund", "refunds", "money back", "refund policy"],
     "answer": "Yes, refunds are available within 30 days."
   },
   {
-    "question": "What are your working hours?",
+    "keywords": ["support", "contact", "help", "customer service"],
+    "answer": "Contact us at support@example.com."
+  },
+  {
+    "keywords": ["working hours", "timing", "hours", "open"],
     "answer": "We are available from 9 AM to 6 PM."
   }
 ]

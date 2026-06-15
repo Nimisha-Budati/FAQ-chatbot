@@ -10,7 +10,9 @@ const faq = require("./faq.json");
 
 app.post("/chat", (req, res) => {
     try {
-        const userMessage = req.body.message?.toLowerCase().trim();
+        const userMessage = req.body.message
+            ?.toLowerCase()
+            .trim();
 
         if (!userMessage) {
             return res.json({
@@ -19,8 +21,9 @@ app.post("/chat", (req, res) => {
         }
 
         const found = faq.find(item =>
-            item.question.toLowerCase().includes(userMessage) ||
-            userMessage.includes(item.question.toLowerCase())
+            item.keywords.some(keyword =>
+                userMessage.includes(keyword)
+            )
         );
 
         if (found) {
@@ -34,10 +37,11 @@ app.post("/chat", (req, res) => {
         });
 
     } catch (error) {
+
         console.error(error);
 
         return res.json({
-            answer: "Something went wrong. Please try again."
+            answer: "Something went wrong."
         });
     }
 });
@@ -46,8 +50,6 @@ app.get("/", (req, res) => {
     res.send("FAQ Chatbot Backend Running");
 });
 
-const PORT = 5000;
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(5000, () => {
+    console.log("Server running on port 5000");
 });
