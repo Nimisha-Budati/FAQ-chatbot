@@ -1,253 +1,268 @@
+let chats = JSON.parse(localStorage.getItem("chats")) || [];
+let currentChatId = null;
+
 const API_URL = "http://localhost:5000/chat";
 
-function saveChat() {
-    localStorage.setItem(
-        "faqChatHistory",
-        document.getElementById("chat-box").innerHTML
-    );
+function saveChats() {
+    localStorage.setItem("chats", JSON.stringify(chats));
 }
 
-function loadChat() {
-    const savedChat = localStorage.getItem(
-        "faqChatHistory"
-    );
-
-    if (savedChat) {
-        document.getElementById("chat-box").innerHTML =
-            savedChat;
-    }
+/* CLOSE ALL MENUS */
+function closeMenus() {
+    document.querySelectorAll(".menu").forEach(m => m.classList.remove("show"));
 }
 
-function addMessage(text, sender) {
+document.addEventListener("click", closeMenus);
 
-    const chatBox =
-        document.getElementById("chat-box");
+function newChat() {
+    const id = Date.now().toString();
 
-    const messageDiv =
-        document.createElement("div");
+    const chat = {
+        id,
+        title: "New Chat",
+        messages: [],
+        pinned: false
+    };
 
-    messageDiv.className =
-        `message ${sender}`;
+    chats.push(chat);
+    currentChatId = id;
 
-    const row =
-        document.createElement("div");
+    saveChats();
+    renderChatList();
+    renderChat();
+}
 
-    row.className = "message-row";
+function loadChat(id) {
+    currentChatId = id;
+    renderChat();
+}
 
-    const avatar =
-        document.createElement("div");
+/* ================= SIDEBAR ================= */
+function renderChatList() {
+    const list = document.getElementById("chat-list");
+    list.innerHTML = "";
 
-    avatar.className = "avatar";
+    const sortedChats = [...chats].sort((a, b) => b.pinned - a.pinned);
 
-    avatar.textContent =
-        sender === "bot"
-        ? "🤖"
-        : "👤";
+    sortedChats.forEach(c => {
 
-    const bubble =
-        document.createElement("div");
+        const item = document.createElement("div");
+        item.className = "chat-item";
 
-    bubble.className = "bubble";
-    bubble.textContent = text;
+        if (c.id === currentChatId) {
+            item.classList.add("active-chat");
+        }
 
-    if (sender === "bot") {
+        const title = document.createElement("span");
+        title.className = "chat-title";
+        title.innerText = (c.pinned ? "⭐ " : "") + c.title;
+        title.onclick = () => loadChat(c.id);
 
-        row.appendChild(avatar);
-        row.appendChild(bubble);
+        const wrap = document.createElement("div");
+        wrap.className = "menu-wrap";
 
-    } else {
+        const btn = document.createElement("span");
+        btn.className = "menu-btn";
+        btn.innerText = "⋯";
 
-        row.appendChild(bubble);
-        row.appendChild(avatar);
+        const menu = document.createElement("div");
+        menu.className = "menu";
 
-    }
-
-    const time =
-        document.createElement("div");
-
-    time.className = "time";
-
-    time.textContent =
-        new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            document.querySelectorAll(".menu").forEach(m => {
+            if (m !== menu) m.classList.remove("show");
         });
+        const rect = btn.getBoundingClientRect();
+        menu.style.top = rect.bottom + "px";
+        menu.style.left = (rect.right - 140) + "px";
+        menu.classList.toggle("show");
+        };
 
-    messageDiv.appendChild(row);
-    messageDiv.appendChild(time);
+        const rename = document.createElement("div");
+        rename.innerText = "Rename";
+        rename.onclick = (e) => {
+            e.stopPropagation();
+            const name = prompt("Rename chat:", c.title);
+            if (name) {
+                c.title = name;
+                saveChats();
+                renderChatList();
+            }
+        };
 
-    chatBox.appendChild(messageDiv);
+        const pin = document.createElement("div");
+        pin.innerText = c.pinned ? "Unpin" : "Pin";
+        pin.onclick = (e) => {
+            e.stopPropagation();
+            c.pinned = !c.pinned;
+            saveChats();
+            renderChatList();
+        };
 
-    chatBox.scrollTop =
-        chatBox.scrollHeight;
+        const share = document.createElement("div");
+        share.innerText = "Share";
+        share.onclick = (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(`${location.href}?chat=${c.id}`);
+        };
 
-    saveChat();
+        const del = document.createElement("div");
+        del.innerText = "Delete";
+        del.onclick = (e) => {
+            e.stopPropagation();
 
-    return messageDiv;
+            chats = chats.filter(x => x.id !== c.id);
+
+            if (currentChatId === c.id) {
+                currentChatId = chats.length ? chats[0].id : null;
+            }
+
+            saveChats();
+            renderChatList();
+            renderChat();
+        };
+
+        menu.append(rename, pin, share, del);
+        wrap.append(btn, menu);
+
+        item.append(title, wrap);
+        list.appendChild(item);
+    });
 }
 
+/* ================= CHAT ================= */
+function renderChat() {
+    const chatBox = document.getElementById("chat-box");
+    chatBox.innerHTML = "";
 
+    const chat = chats.find(c => c.id === currentChatId);
+    if (!chat) return;
+
+    chat.messages.forEach(m => {
+        const msg = document.createElement("div");
+        msg.className = `message ${m.sender.replace(" typing", "")}`;
+        msg.innerText = m.text;
+        chatBox.appendChild(msg);
+    });
+}
+
+/* ================= SEND ================= */
 async function sendMessage() {
-
-    const input =
-        document.getElementById("user-input");
-
-    const message =
-        input.value.trim();
+    const input = document.getElementById("user-input");
+    const message = input.value.trim();
 
     if (!message) return;
 
-    addMessage(message, "user");
+    if (!currentChatId) newChat();
 
+    const chat = chats.find(c => c.id === currentChatId);
+
+    chat.messages.push({ sender: "user", text: message });
     input.value = "";
 
-    const typingMsg =
-        addMessage("Typing...", "bot");
+    const typing = { sender: "bot typing", text: "● ● ●" };
+    chat.messages.push(typing);
 
-    try {
+    saveChats();
+    renderChat();
 
-        const response =
-            await fetch(API_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-                body: JSON.stringify({
-                    message
-                })
-            });
+    const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+    });
 
-        const data =
-            await response.json();
+    const data = await res.json();
 
-        setTimeout(() => {
+    chat.messages = chat.messages.filter(m => m !== typing);
 
-            typingMsg.querySelector(
-                ".bubble"
-            ).textContent =
-                data.answer;
+    const botMsg = { sender: "bot", text: "" };
+    chat.messages.push(botMsg);
 
-            saveChat();
+    let text = data.answer;
+    let i = 0;
 
-        }, 1000);
-
-    } catch (error) {
-
-        setTimeout(() => {
-
-            typingMsg.querySelector(
-                ".bubble"
-            ).textContent =
-                "Unable to connect to server.";
-
-            saveChat();
-
-        }, 1000);
-
-        console.error(error);
+    function stream() {
+        if (i < text.length) {
+            botMsg.text += text[i++];
+            renderChat();
+            setTimeout(stream, 10);
+        } else {
+            saveChats();
+        }
     }
+
+    stream();
+
+    if (chat.title === "New Chat") {
+        chat.title =
+            message.length > 20
+                ? message.slice(0, 20) + "..."
+                : message;
+    }
+
+    saveChats();
+    renderChatList();
 }
 
-function askSuggestion(question) {
-
-    document.getElementById(
-        "user-input"
-    ).value = question;
-
+/* ================= UI HELPERS ================= */
+function askSuggestion(text) {
+    document.getElementById("user-input").value = text;
     sendMessage();
 }
 
 function clearChat() {
-
-    localStorage.removeItem(
-        "faqChatHistory"
-    );
-
-    document.getElementById(
-        "chat-box"
-    ).innerHTML = "";
-
-    addMessage(
-        "👋 Welcome! Ask me any FAQ question.",
-        "bot"
-    );
+    chats = [];
+    currentChatId = null;
+    localStorage.removeItem("chats");
+    newChat();
 }
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+/* ================= INIT ================= */
+window.onload = () => {
 
-        loadChat();
+    if (chats.length === 0) newChat();
+    else {
+        currentChatId = chats[0].id;
+        renderChatList();
+        renderChat();
+    }
 
-        if (
-            document.getElementById(
-                "chat-box"
-            ).innerHTML.trim() === ""
-        ) {
-            addMessage(
-                "👋 Welcome! Ask me any FAQ question.",
-                "bot"
-            );
+    const themeBtn = document.getElementById("theme-toggle");
+
+    if (localStorage.getItem("theme") === "light") {
+        document.body.classList.add("light-mode");
+        themeBtn.textContent = "☀️ Light Mode";
+    }
+
+    themeBtn.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+
+        localStorage.setItem(
+            "theme",
+            document.body.classList.contains("light-mode")
+                ? "light"
+                : "dark"
+        );
+
+        themeBtn.textContent =
+            document.body.classList.contains("light-mode")
+                ? "☀️ Light Mode"
+                : "🌙 Dark Mode";
+    });
+
+    const inputBox = document.getElementById("user-input");
+
+    inputBox.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
         }
+    });
 
-        document
-            .getElementById("user-input")
-            .addEventListener(
-                "keydown",
-                function(event) {
-
-                    if (
-                        event.key === "Enter"
-                    ) {
-                        sendMessage();
-                    }
-
-                }
-            );
-    }
-);
-
-const themeBtn =
-    document.getElementById("theme-toggle");
-
-if (localStorage.getItem("theme") === "light") {
-
-    document.body.classList.add("light-mode");
-
-    themeBtn.textContent =
-        "☀️ Light Mode";
-}
-
-themeBtn.addEventListener("click", () => {
-
-    document.body.classList.toggle(
-        "light-mode"
-    );
-
-    if (
-        document.body.classList.contains(
-            "light-mode"
-        )
-    ) {
-
-        localStorage.setItem(
-            "theme",
-            "light"
-        );
-
-        themeBtn.textContent =
-            "☀️ Light Mode";
-
-    } else {
-
-        localStorage.setItem(
-            "theme",
-            "dark"
-        );
-
-        themeBtn.textContent =
-            "🌙 Dark Mode";
-    }
-
-});
+    inputBox.addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+    });
+};
