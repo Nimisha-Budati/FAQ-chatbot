@@ -611,3 +611,197 @@ body, html, #root {
     max-width: 85%;
   }
 }
+/* Administrative Dashboard View System overlay styles */
+.admin-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.admin-modal {
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 1000px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 2rem;
+  color: var(--text-main);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.admin-close-btn:hover { color: var(--text-main); }
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  padding: 1.25rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.metric-card h3 {
+  font-size: 2rem;
+  color: var(--primary-accent);
+  margin-bottom: 0.25rem;
+}
+
+.warning-metric h3 { color: #ef4444; }
+
+.admin-body-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .admin-body-layout { grid-template-columns: 1fr; }
+}
+
+.admin-faq-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.admin-faq-form input, .admin-faq-form textarea, .admin-faq-form select {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 6px;
+  padding: 0.75rem;
+  color: var(--text-main);
+  outline: none;
+  font-family: var(--font-main);
+}
+
+.train-btn {
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.train-btn:hover { opacity: 0.9; }
+
+.status-label {
+  font-size: 0.85rem;
+  color: #10b981;
+  text-align: center;
+}
+
+.logs-table-wrapper {
+  margin-top: 1rem;
+  background: var(--bg-glass);
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.logs-table th, .logs-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.logs-table th { background: rgba(0,0,0,0.2); color: var(--text-muted); }
+
+.query-td {
+  color: #818cf8;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.query-td:hover { color: var(--primary-hover); }
+
+.admin-toggle-nav-btn {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  color: var(--text-main);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 1rem;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.admin-toggle-nav-btn:hover { border-color: var(--primary-accent); background: var(--border-glass); }
+/* Voice Dictation Core Button layout styles */
+.voice-mic-btn {
+  background: transparent;
+  border: 1px solid var(--border-glass);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 2px;
+  margin-right: 0.25rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.voice-mic-btn:hover:not(:disabled) {
+  background: var(--border-glass);
+  border-color: var(--text-muted);
+}
+
+/* Pulsating active audio recording frame */
+.voice-mic-btn.mic-active {
+  background: #ef4444 !important;
+  border-color: #f87171 !important;
+  animation: micPulse 1.4s infinite ease-in-out;
+}
+
+@keyframes micPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}

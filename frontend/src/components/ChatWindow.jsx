@@ -7,6 +7,10 @@ export default function ChatWindow({ chat, onSendMessage, suggestions, isLoading
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
+  
+  // Voice Input Speech State Hooks
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
 
   // Auto growing textarea configuration tracking logic
   useEffect(() => {
@@ -16,9 +20,63 @@ export default function ChatWindow({ chat, onSendMessage, suggestions, isLoading
     }
   }, [input]);
 
+  // Smooth scroll helper
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat?.messages, isLoading]);
+
+  // Dynamic initialization handler triggered upon explicit user interaction
+  const toggleVoiceInput = (e) => {
+    e.preventDefault();
+    
+    if (!recognitionRef.current) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        alert("Speech recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge!");
+        return;
+      }
+
+      const rec = new SpeechRecognition();
+      rec.continuous = false;
+      rec.interimResults = false;
+      rec.lang = 'en-US';
+
+      rec.onstart = () => {
+        setIsListening(true);
+      };
+      
+      rec.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(prev => prev ? `${prev} ${transcript}` : transcript);
+      };
+
+      rec.onerror = (err) => {
+        console.error("Speech API error encountered:", err.error);
+        setIsListening(false);
+        if (err.error === 'not-allowed') {
+          alert("Microphone access blocked. Click the lock/mic icon in your browser address bar to switch permissions to 'Allow'!");
+        }
+      };
+
+      rec.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = rec;
+    }
+
+    // Process actual tracking engine hardware loops
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        console.log("Recognition instances resetting context safely...");
+      }
+    }
+  };
 
   const handleSubmit = (e) => {
     e?.preventDefault();
@@ -75,9 +133,21 @@ export default function ChatWindow({ chat, onSendMessage, suggestions, isLoading
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask a question... (Press Enter to submit)"
+            placeholder={isListening ? "Listening... Speak into your microphone." : "Ask a question... (Press Enter to submit)"}
             disabled={isLoading}
           />
+
+          {/* Dynamic Voice Dictation Mic Button Trigger */}
+          <button 
+            type="button"
+            className={`voice-mic-btn ${isListening ? 'mic-active' : ''}`}
+            onClick={toggleVoiceInput}
+            title="Toggle voice input"
+            disabled={isLoading}
+          >
+            {isListening ? '🛑' : '🎙️'}
+          </button>
+
           <button type="submit" className="send-action-btn" disabled={!input.trim() || isLoading}>
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>

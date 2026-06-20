@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import chatRouter from './routes/chat.js';
 import { faqService } from './services/faqService.js';
+import adminRouter from './routes/admin.js';
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 // Main Chat and FAQ API Routes
 app.use('/api/chat', chatRouter);
+app.use('/api/admin', adminRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

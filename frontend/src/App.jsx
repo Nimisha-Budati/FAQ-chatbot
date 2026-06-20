@@ -4,6 +4,7 @@ import ChatWindow from './components/ChatWindow.jsx';
 import ThemeToggle from './components/ThemeToggle.jsx';
 import { useLocalStorage } from './hooks/useLocalStorage.js';
 import { api } from './services/api.js';
+import AdminDashboard from './components/AdminDashboard.jsx';
 
 export default function App() {
   const [chats, setChats] = useLocalStorage('ai_faq_chats', []);
@@ -12,6 +13,7 @@ export default function App() {
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Load initial automated prompt triggers
   useEffect(() => {
@@ -140,9 +142,11 @@ export default function App() {
           <div className="brand-title">
             <span className="sparkle-icon">✨</span> AI FAQ Desk
           </div>
+          <button className="admin-toggle-nav-btn" onClick={() => setIsAdminOpen(true)}>
+            📊 Admin Portal
+          </button>
           <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} />
         </header>
-
         <ChatWindow 
           chat={activeChat}
           onSendMessage={handleSendMessage}
@@ -151,6 +155,7 @@ export default function App() {
           onFeedback={handleFeedback}
         />
       </main>
+      {isAdminOpen && <AdminDashboard onClose={() => setIsAdminOpen(false)} />}
     </div>
   );
 }
