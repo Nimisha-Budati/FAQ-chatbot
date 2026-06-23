@@ -111,6 +111,7 @@ export default function ChatWindow({ chat, onSendMessage, suggestions, isLoading
             <SuggestedQuestions 
               prompts={suggestions} 
               onPromptSelect={(question) => onSendMessage(question)} 
+              required
             />
           </div>
         ) : (
@@ -128,31 +129,39 @@ export default function ChatWindow({ chat, onSendMessage, suggestions, isLoading
         <form onSubmit={handleSubmit} className="input-form-wrapper">
           <textarea
             ref={textareaRef}
-            className="chat-textarea-input"
+            className={`chat-textarea-input ${isListening ? 'input-listening-glow' : ''}`}
             rows="1"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isListening ? "Listening... Speak into your microphone." : "Ask a question... (Press Enter to submit)"}
+            placeholder={isListening ? "Listening closely... Speak now." : "Ask a question... (Press Enter to submit)"}
             disabled={isLoading}
           />
 
-          {/* Dynamic Voice Dictation Mic Button Trigger */}
-          <button 
-            type="button"
-            className={`voice-mic-btn ${isListening ? 'mic-active' : ''}`}
-            onClick={toggleVoiceInput}
-            title="Toggle voice input"
-            disabled={isLoading}
-          >
-            {isListening ? '🛑' : '🎙️'}
-          </button>
+          <div className="input-actions-cluster">
+            {/* 🎙️ Premium Dynamic Microphone Action Button */}
+            <button 
+              type="button"
+              className={`voice-mic-btn-premium ${isListening ? 'mic-pulse-active' : ''}`}
+              onClick={toggleVoiceInput}
+              title={isListening ? "Stop listening" : "Type with your voice"}
+              disabled={isLoading}
+            >
+              {isListening ? (
+                <span className="mic-stop-square"></span>
+              ) : (
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                </svg>
+              )}
+            </button>
 
-          <button type="submit" className="send-action-btn" disabled={!input.trim() || isLoading}>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-            </svg>
-          </button>
+            <button type="submit" className="send-action-btn" disabled={!input.trim() || isLoading}>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+              </svg>
+            </button>
+          </div>
         </form>
         <div className="form-disclaimer-text">AI NLP Semantic Engine running locally on TensorFlow.js</div>
       </div>

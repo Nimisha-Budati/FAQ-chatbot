@@ -8,7 +8,7 @@ import { useLocalStorage } from './hooks/useLocalStorage.js';
 import { api } from './services/api.js';
 
 export default function App() {
-  // Authentication & Session Session Tracking Hooks
+  // Authentication & Session Tracking Hooks
   const [token, setToken] = useLocalStorage('ai_faq_token', null);
   const [user, setUser] = useLocalStorage('ai_faq_user', null);
 
@@ -102,7 +102,6 @@ export default function App() {
       const botMessage = {
         id: responseData.id || `msg_${Date.now()}_b`,
         sender: 'bot',
-        // FIX: Extract responseData.answer (or fallback to responseData.text/message) 
         text: responseData.answer || responseData.text || responseData.message || "No textual response content provided.", 
         confidence: responseData.confidence || responseData.matchScore,
         matched: responseData.matched,
@@ -169,21 +168,27 @@ export default function App() {
       />
 
       <main className="main-content-pane">
-        <header className="app-top-navbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem' }}>
-          <div className="brand-title">
-            <span className="sparkle-icon">✨</span> AI FAQ Desk <span style={{ fontSize: '0.8rem', opacity: 0.6, marginLeft: '0.5rem' }}>({user?.name})</span>
+        {/* ✨ UPGRADED GLASSMORPHIC NAV BAR */}
+        <header className="app-main-header">
+          <div className="header-brand-section">
+            <div className="brand-logo-glow">🤖</div>
+            <div className="brand-text-wrapper">
+              <h1>AI FAQ Engine</h1>
+              <span className="user-session-badge">Active Session: <strong>{user?.name || 'User'}</strong></span>
+            </div>
           </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button className="admin-toggle-nav-btn" onClick={() => setIsAdminOpen(true)}>
-              📊 Admin Portal
+
+          <div className="header-actions-panel">
+            <button className="nav-action-btn admin-portal-trigger" onClick={() => setIsAdminOpen(true)}>
+              <span className="btn-icon">📊</span>
+              <span className="btn-label">Admin Portal</span>
             </button>
-            <button 
-              onClick={handleLogout} 
-              style={{ padding: '0.4rem 0.8rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}
-            >
-              🚪 Logout
+            
+            <button className="nav-action-btn session-logout-trigger" onClick={handleLogout}>
+              <span className="btn-icon">🚪</span>
+              <span className="btn-label">Logout</span>
             </button>
+
             <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} />
           </div>
         </header>
