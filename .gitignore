@@ -1,20 +1,23 @@
 # Dependency directories
 node_modules/
 jspm_packages/
+frontend/node_modules/
+backend/node_modules/
 
 # Build and distribution directories
 dist/
 build/
 .out/
 
-# Development log buffers and operational analytics files
+# Local Multi-User Storage & Operational Analytics Files (NEVER push to GitHub)
+backend/data/users.json
 backend/data/feedback.json
 backend/data/unanswered.json
 
-# Optional exception: Keep the faq knowledge base but ignore generated log files
+# Optional exception: Keep the core static FAQ knowledge base checked in
 !backend/data/faq.json
 
-# Environment configurations and hidden credentials
+# Environment configurations and hidden secret credentials
 .env
 .env.local
 .env.development.local

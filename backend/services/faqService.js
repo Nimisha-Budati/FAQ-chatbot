@@ -40,7 +40,8 @@ class FaqService {
     return tf.div(innerProduct, tf.mul(normA, normB)).dataSync()[0];
   }
 
-  async matchQuestion(userQuery) {
+  // UPDATED: Now accepts userId parameter to isolate logs
+  async matchQuestion(userQuery, userId) {
     if (!this.model || this.faqs.length === 0) {
       return { 
         answer: "I'm still organizing my knowledge base. Please try again shortly.", 
@@ -49,7 +50,27 @@ class FaqService {
       };
     }
 
-    // Embed user query
+    // 🌟 CHATGPT-STYLE GREETING LAYER 
+    // Normalize text: lowercase and remove punctuation
+    const cleanQuery = userQuery.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
+    
+    // List of common casual greetings across multiple languages
+    const greetings = [
+      'hi', 'hello', 'hey', 'hola', 'bonjour', 'namaste', 'heyy', 'hi there', 'hello there',
+      'good morning', 'good afternoon', 'good evening', 'yo'
+    ];
+
+    if (greetings.includes(cleanQuery)) {
+      return {
+        answer: "Hello! 👋 I am your localized AI assistant. How can I help you with our documentation or system configurations today?",
+        confidence: 100, // Force perfect confidence for basic greetings
+        matched: true,
+        category: "General"
+      };
+    }
+
+    // 🧠 SYSTEM CORE VECTOR MATCHING LOGIC (Kept exactly identical)
+    // Embed user query (works automatically across multiple languages)
     const queryEmbedding = await this.model.embed([userQuery]);
     const queryTensor = tf.slice(queryEmbedding, [0, 0], [1, -1]).flatten();
 
@@ -83,8 +104,8 @@ class FaqService {
         category: this.faqs[bestMatchIndex].category || "General"
       };
     } else {
-      // Capture unanswered inquiries for system continuous improvement
-      await this.logUnansweredQuestion(userQuery, confidenceScore);
+      // FIX: Passes user identification down to telemetry log
+      await this.logUnansweredQuestion(userQuery, confidenceScore, userId);
       return {
         answer: "I couldn't find an exact match for your question in our system. I have logged this inquiry for our team to look into!",
         confidence: confidenceScore,
@@ -94,23 +115,27 @@ class FaqService {
     }
   }
 
-  async logUnansweredQuestion(query, score) {
+  // UPDATED: Saves the userId alongside the unanswered log structure
+  async logUnansweredQuestion(query, score, userId) {
     const data = await readJsonFile(UNANSWERED_PATH, []);
     data.push({
       query,
       detectedConfidence: score,
+      userId: userId || null, // 🔒 Maps log to account
       timestamp: new Date().toISOString()
     });
     await writeJsonFile(UNANSWERED_PATH, data);
   }
 
-  async saveFeedback(messageId, query, answer, feedbackType) {
+  // UPDATED: Saves the userId alongside the feedback object
+  async saveFeedback(messageId, query, answer, feedbackType, userId) {
     const data = await readJsonFile(FEEDBACK_PATH, []);
     data.push({
       messageId,
       query,
       answer,
       feedback: feedbackType, // 'helpful' or 'not_helpful'
+      userId: userId || null, // 🔒 Maps feedback to account
       timestamp: new Date().toISOString()
     });
     await writeJsonFile(FEEDBACK_PATH, data);

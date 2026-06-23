@@ -2,20 +2,32 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import chatRouter from './routes/chat.js';
-import { faqService } from './services/faqService.js';
 import adminRouter from './routes/admin.js';
+import { faqService } from './services/faqService.js';
+import { registerUser, loginUser } from './controllers/authController.js';
+import { verifyToken } from './middleware/authMiddleware.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Main Chat and FAQ API Routes
-app.use('/api/chat', chatRouter);
-app.use('/api/admin', adminRouter);
+// ==========================================
+// 🔓 PUBLIC AUTHENTICATION ROUTES
+// ==========================================
+app.post('/api/auth/register', registerUser);
+app.post('/api/auth/login', loginUser);
+
+// ==========================================
+// 🔒 PROTECTED CORE CHAT & ADMIN API ROUTES
+// ==========================================
+// By injecting verifyToken before your routers, all routes inside 
+// chatRouter and adminRouter are automatically secured by JWT sessions!
+app.use('/api/chat', verifyToken, chatRouter);
+app.use('/api/admin', verifyToken, adminRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -29,7 +41,7 @@ faqService.initialize()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`=================================================`);
-      console.log(`🚀 Backend Server running smoothly on port ${PORT}`);
+      console.log(`🚀 Secure Multi-User Server running smoothly on port ${PORT}`);
       console.log(`🤖 Universal Sentence Encoder Model loaded successfully`);
       console.log(`=================================================`);
     });

@@ -771,7 +771,7 @@ body, html, #root {
 }
 
 .admin-toggle-nav-btn:hover { border-color: var(--primary-accent); background: var(--border-glass); }
-/* Voice Dictation Core Button layout styles */
+/*Voice Dictation Core Button layout styles */
 .voice-mic-btn {
   background: transparent;
   border: 1px solid var(--border-glass);
@@ -793,7 +793,6 @@ body, html, #root {
   border-color: var(--text-muted);
 }
 
-/* Pulsating active audio recording frame */
 .voice-mic-btn.mic-active {
   background: #ef4444 !important;
   border-color: #f87171 !important;
@@ -804,4 +803,89 @@ body, html, #root {
   0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
   70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
   100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* ==========================================================================
+   💾 ADMIN PORTAL INTERACTIVE FORM STATES
+   ========================================================================== */
+
+/* Disabled input and textarea layouts while model is saving */
+.admin-faq-form input:disabled,
+.admin-faq-form textarea:disabled,
+.admin-faq-form select:disabled {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+}
+
+/* Base style for the commit training button */
+.train-btn {
+  background-color: #3b82f6; /* Premium Blue */
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.train-btn:hover:not(:disabled) {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.train-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ⏳ Loading & Disabled button modifier state */
+.train-btn:disabled {
+  background-color: #4b5563 !important; /* Neutral dark gray */
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Dynamic status notification block styling */
+.status-label {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #6b7280;
+}
+
+/* Green feedback if status string begins with success indicator */
+.status-label[textContent*="✨"],
+.status-label:has(text):contains("✨") {
+  color: #4ade80;
+  background-color: rgba(74, 222, 128, 0.1);
+  border-left-color: #4ade80;
+}
+
+/* Red feedback if status string begins with error indicator */
+.status-label[textContent*="❌"],
+.status-label:has(text):contains("❌") {
+  color: #f87171;
+  background-color: rgba(248, 113, 113, 0.1);
+  border-left-color: #f87171;
+}
+
+/* Smooth micro-interaction appearance fade */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
 }
