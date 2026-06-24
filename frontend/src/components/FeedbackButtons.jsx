@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function FeedbackButtons({ onFeedbackSubmit }) {
-  const [status, setStatus] = useState(null); // 'helpful' | 'not_helpful'
+export default function FeedbackButtons({ savedFeedback, onFeedbackSubmit }) {
+  const [status, setStatus] = useState(savedFeedback || null);
+
+  useEffect(() => {
+    setStatus(savedFeedback || null);
+  }, [savedFeedback]);
 
   const handleFeedback = (type) => {
-    if (status) return; // limit interaction to once per event trigger node
-    setStatus(type);
-    onFeedbackSubmit(type);
+    // 🔄 CHANGE: If clicking the same button again, undo it. Otherwise, set the new type.
+    const newStatus = status === type ? null : type;
+    setStatus(newStatus);
+    onFeedbackSubmit(newStatus); // Sends 'helpful', 'not_helpful', or null if cleared
   };
 
   return (
@@ -16,15 +21,15 @@ export default function FeedbackButtons({ onFeedbackSubmit }) {
         <button 
           className={`feedback-btn ${status === 'helpful' ? 'active-good' : ''}`} 
           onClick={() => handleFeedback('helpful')}
-          disabled={status !== null}
+          // 🔄 CHANGE: Removed disabled prop so it can always be clicked
           title="Helpful"
         >
           👍 Nice
         </button>
         <button 
-          className={`feedback-btn ${status === 'not_helpful' ? 'active-bad' : ''}`} 
+          className={`feedback-btn ${status === 'not_helpful' || status === 'unhelpful' ? 'active-bad' : ''}`} 
           onClick={() => handleFeedback('not_helpful')}
-          disabled={status !== null}
+          // 🔄 CHANGE: Removed disabled prop so it can always be clicked
           title="Not Helpful"
         >
           👎 Not matching

@@ -7,14 +7,12 @@ const router = express.Router();
 router.post('/query', async (req, res) => {
   try {
     const { message } = req.body;
-    // 🔒 Extract the authorized user ID attached by verifyToken
     const currentUserId = req.user?.userId;
 
     if (!message || message.trim() === '') {
       return res.status(400).json({ error: 'Message payload is mandatory.' });
     }
 
-    // Pass the currentUserId into the service so unanswered logs can be tagged to this account
     const result = await faqService.matchQuestion(message, currentUserId);
     return res.json(result);
   } catch (error) {
@@ -23,19 +21,30 @@ router.post('/query', async (req, res) => {
   }
 });
 
-// Save client feedback (Helpful / Not helpful evaluation)
+// ✅ UPDATED ROUTE: Safe data mapping alignment for dashboard synchronization
 router.post('/feedback', async (req, res) => {
   try {
     const { messageId, query, answer, feedback } = req.body;
-    // 🔒 Extract the authorized user ID attached by verifyToken
     const currentUserId = req.user?.userId;
 
     if (!feedback || !query) {
       return res.status(400).json({ error: 'Missing mandatory feedback operational data fields.' });
     }
 
-    // Pass the currentUserId into the service so feedback is logged to this account
-    const output = await faqService.saveFeedback(messageId, query, answer, feedback, currentUserId);
+    // Map 'not_helpful' to 'unhelpful' safely so it pairs natively with your Admin panel rules
+    const normalizedFeedback = feedback === 'not_helpful' ? 'unhelpful' : feedback;
+
+    // Use a robust fallback string if the answer context failed to propagate
+    const safeAnswer = answer || "Default System Response Vector Matched.";
+
+    const output = await faqService.saveFeedback(
+      messageId, 
+      query, 
+      safeAnswer, 
+      normalizedFeedback, 
+      currentUserId
+    );
+    
     return res.json(output);
   } catch (error) {
     console.error('Error recording client feedback structure:', error);

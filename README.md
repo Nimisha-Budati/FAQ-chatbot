@@ -1,8 +1,8 @@
 # 🤖 AI-Powered Semantic FAQ Desk & Knowledge Retrieval Chatbot
 
-An enterprise-grade semantic FAQ and knowledge retrieval platform built with **React, Node.js, Express, TensorFlow.js, and Universal Sentence Encoder (USE)**. The system delivers intelligent answers using vector-based semantic similarity instead of simple keyword matching, providing a modern AI-powered support experience.
+An AI-powered semantic FAQ and knowledge retrieval platform built with **React, Node.js, Express, TensorFlow.js, and Universal Sentence Encoder (USE)**. The system delivers intelligent answers using vector-based semantic similarity instead of traditional keyword matching, providing a smarter and more accurate support experience.
 
-The platform features a premium glassmorphic chat interface, speech-to-text input, user authentication, feedback analytics, and an administrator dashboard for FAQ management and knowledge base training.
+The platform includes semantic search, voice input, multi-threaded conversations, authentication, analytics, feedback tracking, FAQ management, and knowledge base training tools.
 
 ---
 
@@ -16,7 +16,29 @@ The platform features a premium glassmorphic chat interface, speech-to-text inpu
 * Cosine similarity scoring for answer retrieval
 * Confidence-based response filtering
 * Cached FAQ embeddings for faster performance
-* Multilingual semantic understanding support
+* Natural language query matching
+
+---
+
+## 💬 Advanced Chat Management
+
+* Multi-threaded conversations
+* Create and switch chat sessions
+* Rename chat threads
+* Pin important conversations
+* Delete conversations
+* Automatic chat title generation
+* User-specific conversation history
+* Persistent chat storage using LocalStorage
+
+---
+
+## ⚡ Local Macro Engine
+
+* Local command interception
+* Instant browser-side execution
+* Reduced backend processing overhead
+* Separation of system commands from AI queries
 
 ---
 
@@ -29,29 +51,12 @@ The platform features a premium glassmorphic chat interface, speech-to-text inpu
 * One-click microphone activation
 * Automatic speech capture handling
 
-### Premium Microphone Interface
-
-* Animated microphone button
-* Glowing recording indicator
-* Start/Stop recording controls
-* Permission error handling
-
-### Smart Input Box
+### Smart Input Features
 
 * Auto-expanding textarea
 * Smooth scrolling support
 * Responsive message composition
-
----
-
-## 💬 Intelligent Chat System
-
-* Real-time chatbot interactions
-* Semantic FAQ retrieval
-* Suggested question prompts
-* Confidence-based answer selection
-* Fallback handling for unknown questions
-* User-specific conversation isolation
+* Typing indicators
 
 ---
 
@@ -66,13 +71,6 @@ The platform features a premium glassmorphic chat interface, speech-to-text inpu
 
 ## 📊 Admin Dashboard & Analytics
 
-### Live Metrics
-
-* Total FAQ count
-* User satisfaction tracking
-* Unanswered question monitoring
-* Feedback statistics
-
 ### FAQ Management
 
 * Create FAQs
@@ -86,13 +84,32 @@ The platform features a premium glassmorphic chat interface, speech-to-text inpu
 * View unanswered questions
 * Convert unresolved queries into FAQs
 * Automatic dataset updates
-* One-click retraining workflow
+* Knowledge base improvement workflow
 
 ### Feedback Monitoring
 
 * Helpful / Not Helpful tracking
 * User interaction analytics
-* Response quality improvement tools
+* Response quality monitoring
+* Feedback insights
+
+### Real-Time Engine Intelligence
+
+* Total query monitoring
+* Average confidence tracking
+* Active thread statistics
+* Top intent/category analysis
+* Model accuracy health monitoring
+* Real-time performance insights
+
+### Visual Analytics
+
+* Progress-based intent distribution charts
+* Circular model health indicators
+* Live KPI metric cards
+* Confidence score visualization
+* Exportable chat reports
+* Downloadable conversation history
 
 ---
 
@@ -107,7 +124,7 @@ The platform features a premium glassmorphic chat interface, speech-to-text inpu
 
 ### Route Protection
 
-* Protected admin routes
+* Protected routes
 * Authentication middleware
 * Token validation
 * Session persistence
@@ -121,13 +138,7 @@ The platform features a premium glassmorphic chat interface, speech-to-text inpu
 
 ---
 
-## 🎨 Modern User Interface
-
-### Glassmorphism Design
-
-* Frosted glass components
-* Modern translucent layouts
-* Responsive design architecture
+## 🎨 User Experience
 
 ### Theme System
 
@@ -135,11 +146,17 @@ The platform features a premium glassmorphic chat interface, speech-to-text inpu
 * Light mode
 * Persistent theme preferences
 
-### Session Management
+### Settings & Customization
 
-* Active session tracking
-* User status indicators
+* Settings modal
+* User preference management
 * Secure logout functionality
+
+### Responsive Design
+
+* Mobile-friendly interface
+* Responsive layouts
+* Modern chat experience
 
 ---
 
@@ -177,59 +194,45 @@ FAQ-CHATBOT/
 ├── backend/
 │   ├── controllers/
 │   │   └── authController.js
-│   │
 │   ├── data/
 │   │   ├── faq.json
 │   │   ├── feedback.json
 │   │   ├── unanswered.json
 │   │   └── users.json
-│   │
 │   ├── middleware/
 │   │   └── authMiddleware.js
-│   │
-│   ├── node_modules/
-│   │
 │   ├── routes/
 │   │   ├── admin.js
 │   │   └── chat.js
-│   │
 │   ├── services/
 │   │   └── faqService.js
-│   │
 │   ├── utils/
-│   │
 │   ├── package.json
-│   ├── package-lock.json
 │   └── server.js
 │
 ├── frontend/
-│   ├── node_modules/
-│   │
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── AnalyticsDashboard.jsx
 │   │   │   ├── Auth.jsx
 │   │   │   ├── ChatWindow.jsx
 │   │   │   ├── FeedbackButtons.jsx
 │   │   │   ├── Message.jsx
+│   │   │   ├── SettingsModal.jsx
 │   │   │   ├── Sidebar.jsx
 │   │   │   ├── SuggestedQuestions.jsx
 │   │   │   ├── ThemeToggle.jsx
 │   │   │   └── TypingIndicator.jsx
-│   │   │
 │   │   ├── hooks/
 │   │   │   └── useLocalStorage.js
-│   │   │
 │   │   ├── services/
 │   │   │   └── api.js
-│   │   │
 │   │   ├── App.css
 │   │   ├── App.jsx
 │   │   └── main.jsx
-│   │
 │   ├── index.html
 │   ├── package.json
-│   ├── package-lock.json
 │   └── vite.config.js
 │
 ├── .gitignore
@@ -238,14 +241,20 @@ FAQ-CHATBOT/
 
 ---
 
+# ⚙️ AI Workflow
+
+1. User submits a question.
+2. Universal Sentence Encoder generates a vector embedding.
+3. Pre-computed FAQ embeddings are loaded from memory.
+4. Cosine similarity is calculated between vectors.
+5. The highest similarity score is selected.
+6. A confidence score is computed.
+7. If the confidence threshold is met, the matching FAQ answer is returned.
+8. Otherwise, the query is logged as unanswered for administrator review and future training.
+
+---
+
 # ⚙️ Installation
-
-## Clone Repository
-
-```bash
-git clone <repository-url>
-cd FAQ-CHATBOT
-```
 
 ## Install Backend Dependencies
 
@@ -266,15 +275,11 @@ npm install
 
 ## Start Backend Server
 
-From the project root directory:
-
 ```bash
 npm run dev
 ```
 
 ## Start Frontend Server
-
-From the frontend directory:
 
 ```bash
 cd frontend
@@ -298,43 +303,6 @@ Recommended browsers:
 
 ---
 
-# 🧠 AI Workflow
-
-1. User submits a question.
-2. Universal Sentence Encoder generates a vector embedding.
-3. Pre-computed FAQ embeddings are loaded from memory.
-4. Cosine similarity is calculated between vectors.
-5. Highest similarity score is selected.
-6. If confidence ≥ 70%, the matching FAQ answer is returned.
-7. Otherwise, the query is logged as unanswered for administrator review.
-
----
-
-# 🔒 Repository Protection
-
-The project uses `.gitignore` rules to:
-
-* Exclude node_modules
-* Exclude sensitive local data
-* Protect user credentials
-* Hide feedback telemetry logs
-* Hide unanswered question logs
-* Preserve the FAQ knowledge base
-
----
-
-# 📈 Future Enhancements
-
-* Database migration (MongoDB/PostgreSQL)
-* OpenAI/LLM integration
-* User profile management
-* Advanced analytics dashboards
-* Exportable reports
-* Multi-language UI support
-* Role-based access control
-
----
-
 # 👩‍💻 Internship Project
 
 Developed as part of a **Web Development Internship Program**, demonstrating:
@@ -355,14 +323,18 @@ Developed as part of a **Web Development Internship Program**, demonstrating:
 ## ⭐ Highlights
 
 ✅ Semantic Search FAQ System
-✅ TensorFlow.js & USE Integration
+✅ TensorFlow.js & Universal Sentence Encoder Integration
+✅ Cosine Similarity Matching
 ✅ Voice Recognition Support
+✅ Multi-Threaded Chat Management
 ✅ Authentication & Session Management
-✅ Admin Analytics Dashboard
+✅ Admin Dashboard
+✅ Analytics Dashboard
 ✅ FAQ CRUD Operations
 ✅ User Feedback Tracking
-✅ Suggested Questions
+✅ Suggested Questions Engine
 ✅ Dark/Light Theme Support
-✅ Responsive Glassmorphic UI
+✅ Responsive User Interface
 ✅ Local JSON Database Storage
 ✅ Knowledge Base Training Workflow
+✅ Exportable Chat Reports
