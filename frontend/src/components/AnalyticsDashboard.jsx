@@ -70,6 +70,7 @@ export default function AnalyticsDashboard({ chats = [] }) {
   const avgConfidenceNum = messagesWithConfidence > 0 ? totalConfidence / messagesWithConfidence : 0;
   const avgConfidence = avgConfidenceNum.toFixed(1);
 
+  // Sorted dynamic categories based on user-selected time filters
   const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
 
   // Count active threads that have at least one message in the selected time frame
@@ -96,7 +97,7 @@ export default function AnalyticsDashboard({ chats = [] }) {
               background: '#16161a',
               color: '#fff',
               border: '1px solid #2a2a35',
-              padding: '4px 8px',
+              padding: '6px 12px',
               borderRadius: '6px',
               fontSize: '0.85rem',
               outline: 'none',
@@ -114,17 +115,17 @@ export default function AnalyticsDashboard({ chats = [] }) {
       {/* GRID LEVEL 1: HIGHLIGHT CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px', marginBottom: '2rem' }}>
         <div style={{ background: '#16161a', padding: '1rem', borderRadius: '10px', border: '1px solid #2a2a35' }}>
-          <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase' }}>Queries</span>
+          <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', fontWeight: '600' }}>Queries</span>
           <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#fff' }}>{totalUserQuestions}</p>
         </div>
 
         <div style={{ background: '#16161a', padding: '1rem', borderRadius: '10px', border: '1px solid #2a2a35' }}>
-          <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase' }}>Avg AI Confidence</span>
+          <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', fontWeight: '600' }}>Avg AI Confidence</span>
           <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{avgConfidence}%</p>
         </div>
 
         <div style={{ background: '#16161a', padding: '1rem', borderRadius: '10px', border: '1px solid #2a2a35' }}>
-          <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase' }}>Active Threads</span>
+          <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', fontWeight: '600' }}>Active Threads</span>
           <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#6366f1' }}>{activeThreadsCount}</p>
         </div>
       </div>
@@ -134,26 +135,36 @@ export default function AnalyticsDashboard({ chats = [] }) {
         
         {/* Topic Breakdown Bar Listing */}
         <div style={{ background: '#16161a', padding: '1.25rem', borderRadius: '12px', border: '1px solid #2a2a35' }}>
-          <h4 style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: '#aaa', textTransform: 'uppercase' }}>🔥 Top Intent Categories</h4>
+          <h4 style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            🎯 Top Intent Categories
+          </h4>
+          
           {sortedCategories.length === 0 ? (
-            <p style={{ color: '#555', fontSize: '0.85rem', textAlign: 'center', marginTop: '1.5rem' }}>
-              No entries found for this time period.
+            <p style={{ color: '#6b7280', fontSize: '0.85rem', textAlign: 'center', marginTop: '2.5rem' }}>
+              No classified interaction intents found for this timeline window.
             </p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {sortedCategories.map(([category, count]) => {
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {sortedCategories.slice(0, 5).map(([category, count]) => {
                 const totalBotCount = allBotMessages.length;
                 const percentageNum = totalBotCount > 0 ? (count / totalBotCount) * 100 : 0;
                 const percentageStr = percentageNum.toFixed(0);
 
                 return (
-                  <div key={category}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '4px' }}>
-                      <span style={{ color: '#ddd' }}>{category}</span>
-                      <span style={{ color: '#888' }}>{count} hits ({percentageStr}%)</span>
+                  <div key={category} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                      <span style={{ color: '#e5e7eb', fontWeight: '500' }}>{category}</span>
+                      <span style={{ color: '#9ca3af' }}>{count} hits ({percentageStr}%)</span>
                     </div>
-                    <div style={{ width: '100%', height: '6px', background: '#222', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ width: `${percentageStr}%`, height: '100%', background: '#4f46e5', borderRadius: '3px' }} />
+                    {/* Visual Progress Bar Track */}
+                    <div style={{ width: '100%', height: '8px', background: '#1f2937', borderRadius: '999px', overflow: 'hidden' }}>
+                      <div style={{ 
+                        width: `${percentageStr}%`, 
+                        height: '100%', 
+                        background: '#4f46e5', 
+                        borderRadius: '999px',
+                        transition: 'width 0.5s ease-out' 
+                      }} />
                     </div>
                   </div>
                 );
@@ -165,7 +176,9 @@ export default function AnalyticsDashboard({ chats = [] }) {
         {/* Confidence Health Gauge */}
         <div style={{ background: '#16161a', padding: '1.25rem', borderRadius: '12px', border: '1px solid #2a2a35', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <h4 style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: '#aaa', textTransform: 'uppercase' }}>🛡️ Match Score Health</h4>
+            <h4 style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              🛡️ Match Score Health
+            </h4>
             <p style={{ fontSize: '0.85rem', color: '#888', margin: '0 0 1.5rem 0' }}>
               Reflects mathematical vector similarity metrics calculated across selected interactions.
             </p>
@@ -176,7 +189,7 @@ export default function AnalyticsDashboard({ chats = [] }) {
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center', 
               width: '100px', height: '100px', borderRadius: '50%', 
               border: `6px solid ${avgConfidenceNum >= 75 ? '#10b981' : avgConfidenceNum > 0 ? '#f59e0b' : '#3a3a45'}`,
-              fontSize: '1.4rem', fontWeight: 'bold'
+              fontSize: '1.4rem', fontWeight: 'bold', transition: 'border-color 0.3s ease'
             }}>
               {avgConfidence}%
             </div>

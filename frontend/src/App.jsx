@@ -95,6 +95,10 @@ export default function App() {
         id: responseData.id || `msg_${Date.now()}_b`,
         sender: 'bot',
         text: responseData.answer || responseData.text || "No response provided.",
+        
+        // 🎯 FIXED: Explicitly assigns intent groups to ensure analytics visualization renders instantly
+        category: responseData.category || "General", 
+        
         confidence: responseData.confidence || responseData.matchScore,
         timestamp: responseData.timestamp || new Date().toISOString(),
         userQuery: text 
@@ -164,7 +168,6 @@ export default function App() {
       </main>
       {isAdminOpen && <AdminDashboard chats={chats} onClose={() => setIsAdminOpen(false)} />}
       
-      {/* ✅ FIX: Added the allChats={chats} state injection prop right here */}
       {isSettingsOpen && (
         <SettingsModal 
           user={user} 

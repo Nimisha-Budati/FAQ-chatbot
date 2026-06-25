@@ -375,7 +375,7 @@ npm run dev
 # 🌐 Application Access
 
 ```text
-http://localhost:5173
+http://localhost:3000
 ```
 
 Recommended browsers:
