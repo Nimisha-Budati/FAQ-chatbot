@@ -97,15 +97,14 @@ export default function App() {
         text: responseData.answer || responseData.text || "No response provided.",
         confidence: responseData.confidence || responseData.matchScore,
         timestamp: responseData.timestamp || new Date().toISOString(),
-        userQuery: text // ✅ FIX: Attaches original text context directly onto the response entity
+        userQuery: text 
       };
       setChats(prev => prev.map(c => c.id === activeChatId ? { ...c, messages: [...c.messages, botMessage], updatedAt: new Date().toISOString() } : c));
     } catch (err) { console.error('Failed parsing AI reply streams:', err); }
     finally { setIsLoading(false); }
   };
 
- const handleFeedback = async (messageId, query, answer, feedbackType) => {
-    // Instantly updates the UI state with 'helpful', 'not_helpful', or null
+  const handleFeedback = async (messageId, query, answer, feedbackType) => {
     setChats(prevChats => prevChats.map(c => {
       if (c.id !== activeChatId) return c;
       return {
@@ -126,7 +125,6 @@ export default function App() {
       }
       const safeQuery = realQuery || "User Chat Query Inquiry";
       
-      // Send the updated selection ('helpful', 'not_helpful', or null) to backend database
       await api.submitFeedback(messageId, safeQuery, answer, feedbackType); 
     } catch (err) { 
       console.error("Could not send feedback payloads:", err); 
@@ -165,7 +163,18 @@ export default function App() {
         <ChatWindow chat={activeChat} onSendMessage={handleSendMessage} suggestions={suggestions} isLoading={isLoading} onFeedback={handleFeedback} />
       </main>
       {isAdminOpen && <AdminDashboard chats={chats} onClose={() => setIsAdminOpen(false)} />}
-      {isSettingsOpen && <SettingsModal user={user} theme={theme} onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} onClearChats={handleClearAllUserChats} onClose={() => setIsSettingsOpen(false)} />}
+      
+      {/* ✅ FIX: Added the allChats={chats} state injection prop right here */}
+      {isSettingsOpen && (
+        <SettingsModal 
+          user={user} 
+          theme={theme} 
+          allChats={chats} 
+          onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
+          onClearChats={handleClearAllUserChats} 
+          onClose={() => setIsSettingsOpen(false)} 
+        />
+      )}
     </div>
   );
 }

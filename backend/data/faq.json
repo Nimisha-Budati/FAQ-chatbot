@@ -32,12 +32,12 @@
   {
     "question": "How do I switch the application UI themes?",
     "answer": "Toggle between dark and light configurations smoothly by clicking the Sun/Moon iconography element situated right at the top header pane.",
-    "category": "UI"
+    "category": "UI Design"
   },
   {
     "question": "What is TensorFlow.js?",
     "answer": "TensorFlow.js is a library for executing and training machine learning modules directly using JavaScript, both in browser contexts and server-side environments like Node.js.",
-    "category": "AI"
+    "category": "Artificial Intelligence"
   },
   {
     "question": "What happens if a question isn't understood?",
@@ -57,7 +57,7 @@
   {
     "question": "Does this require an internet connection or external API keys?",
     "answer": "No API keys are required! The model parses, maps, and executes all logic locally via Node.js.",
-    "category": "System"
+    "category": "System Architecture"
   },
   {
     "question": "What is Express.js?",
@@ -67,12 +67,12 @@
   {
     "question": "What is Cosine Similarity?",
     "answer": "Cosine similarity measures the cosine of the angle between two multi-dimensional directional vectors, calculating how structurally aligned text vectors are regardless of length.",
-    "category": "AI"
+    "category": "Artificial Intelligence"
   },
   {
     "question": "How does the auto-growing text area input operate?",
     "answer": "The custom input design tracks scroll constraints programmatically and handles structural layout expansions seamlessly.",
-    "category": "UI"
+    "category": "UI Design"
   },
   {
     "question": "Can I wipe clean all history states?",
@@ -82,7 +82,7 @@
   {
     "question": "What is the Universal Sentence Encoder?",
     "answer": "The Universal Sentence Encoder (USE) translates text blocks into 512-dimensional vector arrays, optimized for semantic classification and parsing textual similarities.",
-    "category": "AI"
+    "category": "Artificial Intelligence"
   },
   {
     "question": "How do I create a new conversation thread?",
@@ -92,12 +92,85 @@
   {
     "question": "Is this application platform-responsive?",
     "answer": "Yes, built with structural media boundaries and adaptive components, it works beautifully across mobile viewports, tablets, and desktops.",
-    "category": "UI"
+    "category": "UI Design"
   },
   {
     "question": "What is JSON storage used for in this project?",
     "answer": "JSON structures serve as lightweight datastores for the FAQ knowledge base matrix, logged unresolved edge questions, and user feedback items.",
-    "category": "System"
+    "category": "System Architecture"
+  },
+  {
+    "question": "hii",
+    "answer": "Hloo! How can I help you?",
+    "category": "General Chit-Chat",
+    "userId": "1782191434206"
+  },
+  {
+    "question": "bye",
+    "answer": "Bye! See you again..",
+    "category": "General Chit-Chat",
+    "userId": "1782191434206"
+  },
+  {
+    "question": "Hi, how are you?",
+    "answer": "I'm good, thank you! How about you?",
+    "category": "General Chit-Chat",
+    "userId": "1782189632694"
+  },
+  {
+    "question": "Where can I manage my API keys?",
+    "answer": "API token generation and secret credential scopes are configured inside the Developer Access settings window panel.",
+    "category": "API Integration"
+  },
+  {
+    "question": "What are the API rate limits?",
+    "answer": "Since this setup processes text inputs completely locally inside your runtime server environment, there are no strict billing limits on local usage.",
+    "category": "API Integration"
+  },
+  {
+    "question": "How do I change my profile password?",
+    "answer": "Navigate to the Security settings tab to issue a secure password reset and refresh your active authorization signatures.",
+    "category": "Account Security"
+  },
+  {
+    "question": "Can I set up two-factor authentication?",
+    "answer": "Yes, 2FA can be enabled under your personal account security preferences using standard authenticator apps.",
+    "category": "Account Security"
+  },
+  {
+    "question": "Why is the engine processing slowly right now?",
+    "answer": "Slow matching thresholds usually indicate that your server memory profile is heavily constrained or the backend model file is re-initializing.",
+    "category": "Performance Tuning"
+  },
+  {
+    "question": "How can I clear the application cache?",
+    "answer": "Open your system settings panel inside the UI and click 'Clear App Cache' to safely wipe active session states.",
+    "category": "Performance Tuning"
+  },
+  {
+    "question": "How do I export my chat logs?",
+    "answer": "Click the download action icon on the toolbar to export all active conversations cleanly into a structured JSON database backup file.",
+    "category": "Data Portability"
+  },
+  {
+    "question": "Can I download my chat logs as a CSV text sheet?",
+    "answer": "Yes, select the 'Export to CSV' layout utility under your account data profile settings tab to format your rows instantly.",
+    "category": "Data Portability"
+  },
+  {
+    "question": "What are slash command macros?",
+    "answer": "By typing a forward slash '/' inside the message field, you activate automated shortcut prompts to speed up common tasks.",
+    "category": "Developer Shortcuts"
+  },
+  {
+    "question": "How do I trigger an automatic text summary?",
+    "answer": "Inject the special shortcut command '/summarize' to automatically process a concise breakdown of the active conversation thread.",
+    "category": "Developer Shortcuts"
+  },
+  {
+    "question": "How can I contact support or report an application bug?",
+    "answer": "If you hit an unexpected edge-case failure loop, use the 'Submit Bug Report' form in the menu to send console logs to an administrator.",
+    "category": "Support Infrastructure"
   },
   {
     "question": "hii",
@@ -110,11 +183,5 @@
     "answer": "Bye! See you again..",
     "category": "General",
     "userId": "1782191434206"
-  },
-  {
-    "question": "Hi, how are you?",
-    "answer": "I'm good, thank you! How about you?",
-    "category": "General",
-    "userId": "1782189632694"
   }
 ]

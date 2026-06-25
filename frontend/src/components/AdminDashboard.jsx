@@ -18,6 +18,19 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
   const [editForm, setEditForm] = useState({ question: '', answer: '', category: 'General' });
   const [activeTab, setActiveTab] = useState('edit'); // ✅ 'edit' or 'analytics' tab tracker
 
+  // Custom User-Defined Category States
+  const [isCustomCategoryAdd, setIsCustomCategoryAdd] = useState(false);
+  const [customCategoryAddText, setCustomCategoryAddText] = useState('');
+  const [isCustomCategoryEdit, setIsCustomCategoryEdit] = useState(false);
+  const [customCategoryEditText, setCustomCategoryEditText] = useState('');
+
+  // Extract unique categories dynamically from the database list
+  const dynamicCategories = [...new Set(faqList.map(item => item.category || 'General'))];
+  // Ensure 'General' is always an option if the list is empty
+  if (!dynamicCategories.includes('General')) {
+    dynamicCategories.unshift('General');
+  }
+
   const getHeaders = () => {
     let token = localStorage.getItem('ai_faq_token');
     if (!token) return { 'Content-Type': 'application/json' };
@@ -57,9 +70,47 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
     loadDashboardData();
   }, []);
 
+  // Handle category dropdown change for ADD form
+  const handleAddCategoryDropdownChange = (e) => {
+    const val = e.target.value;
+    if (val === 'USER_DEFINED_CUSTOM') {
+      setIsCustomCategoryAdd(true);
+      setNewFaq({ ...newFaq, category: customCategoryAddText || 'Custom' });
+    } else {
+      setIsCustomCategoryAdd(false);
+      setNewFaq({ ...newFaq, category: val });
+    }
+  };
+
+  // Handle typing a custom category name for ADD form
+  const handleAddCustomTextChange = (e) => {
+    const text = e.target.value;
+    setCustomCategoryAddText(text);
+    setNewFaq({ ...newFaq, category: text });
+  };
+
+  // Handle category dropdown change for EDIT form
+  const handleEditCategoryDropdownChange = (e) => {
+    const val = e.target.value;
+    if (val === 'USER_DEFINED_CUSTOM') {
+      setIsCustomCategoryEdit(true);
+      setEditForm({ ...editForm, category: customCategoryEditText || 'Custom' });
+    } else {
+      setIsCustomCategoryEdit(false);
+      setEditForm({ ...editForm, category: val });
+    }
+  };
+
+  // Handle typing a custom category name for EDIT form
+  const handleEditCustomTextChange = (e) => {
+    const text = e.target.value;
+    setCustomCategoryEditText(text);
+    setEditForm({ ...editForm, category: text });
+  };
+
   const handleAddFaq = async (e) => {
     e.preventDefault();
-    if (!newFaq.question.trim() || !newFaq.answer.trim()) return;
+    if (!newFaq.question.trim() || !newFaq.answer.trim() || !newFaq.category.trim()) return;
 
     setIsSaving(true);
     setStatusMsg('⚙️ Re-indexing vectors and retraining local engine...');
@@ -83,6 +134,8 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
 
         setStatusMsg('✨ System trained successfully! FAQ active.');
         setNewFaq({ question: '', answer: '', category: 'General' });
+        setIsCustomCategoryAdd(false);
+        setCustomCategoryAddText('');
         await loadDashboardData();
         setTimeout(() => setStatusMsg(''), 4000);
       }
@@ -96,22 +149,26 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
   const startResolvingLog = (log) => {
     setResolvingLogIndex(log.originalLogIndex);
     setNewFaq({ question: log.query, answer: '', category: 'General' });
+    setIsCustomCategoryAdd(false);
     setStatusMsg(`🎯 Now resolving log: "${log.query}"`);
   };
 
   const cancelResolution = () => {
     setResolvingLogIndex(null);
     setNewFaq({ question: '', answer: '', category: 'General' });
+    setIsCustomCategoryAdd(false);
     setStatusMsg('');
   };
 
   const startEditing = (faq) => {
     setEditingIndex(faq.originalIndex);
     setEditForm({ question: faq.question, answer: faq.answer, category: faq.category });
+    setIsCustomCategoryEdit(false);
+    setCustomCategoryEditText('');
   };
 
   const handleUpdateFaq = async (originalIndex) => {
-    if (!editForm.question.trim() || !editForm.answer.trim()) return;
+    if (!editForm.question.trim() || !editForm.answer.trim() || !editForm.category.trim()) return;
     setIsSaving(true);
     try {
       const res = await fetch(`http://localhost:3000/api/admin/faq/update/${originalIndex}`, {
@@ -121,6 +178,8 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
       });
       if (res.ok) {
         setEditingIndex(null);
+        setIsCustomCategoryEdit(false);
+        setCustomCategoryEditText('');
         await loadDashboardData();
       }
     } catch (err) {
@@ -177,7 +236,6 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
           <div className="metric-card"><h3>{metrics.totalFeedback}</h3><p>Collected Feedbacks</p></div>
         </div>
 
-      
         <div className="admin-tab-selector-bar" style={{ display: 'flex', gap: '10px', marginTop: '1.5rem', borderBottom: '1px solid #2a2a35', paddingBottom: '0.5rem' }}>
           <button 
             onClick={() => setActiveTab('edit')}
@@ -208,7 +266,6 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
         ) : (
           <div className="admin-body-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1rem' }}>
             
-           
             <div className="admin-form-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
@@ -218,12 +275,38 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
                   )}
                 </div>
                 
-                <form onSubmit={handleAddFaq} className="admin-faq-form">
+                <form onSubmit={handleAddFaq} className="admin-faq-form" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <input type="text" placeholder="Question context..." value={newFaq.question} onChange={e => setNewFaq({...newFaq, question: e.target.value})} disabled={isSaving || resolvingLogIndex !== null} required />
                   <textarea placeholder="Target verified system response..." value={newFaq.answer} onChange={e => setNewFaq({...newFaq, answer: e.target.value})} rows="3" disabled={isSaving} required />
-                  <select value={newFaq.category} onChange={e => setNewFaq({...newFaq, category: e.target.value})} disabled={isSaving}>
-                    <option value="General">General</option><option value="Technology">Technology</option><option value="AI Engine">AI Engine</option><option value="UI Design">UI Design</option>
-                  </select>
+                  
+                  {/* DYNAMIC CATEGORY DROPDOWN - ADD FORM */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <select 
+                      value={isCustomCategoryAdd ? 'USER_DEFINED_CUSTOM' : newFaq.category} 
+                      onChange={handleAddCategoryDropdownChange} 
+                      disabled={isSaving}
+                      style={{ background: '#1f2937', color: '#fff', border: '1px solid #4b5563', padding: '0.5rem', borderRadius: '4px' }}
+                    >
+                      {dynamicCategories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                      <option disabled>──────────</option>
+                      <option value="USER_DEFINED_CUSTOM">➕ Create New Category...</option>
+                    </select>
+
+                    {isCustomCategoryAdd && (
+                      <input 
+                        type="text" 
+                        placeholder="Type custom category name..." 
+                        value={customCategoryAddText} 
+                        onChange={handleAddCustomTextChange}
+                        disabled={isSaving}
+                        required
+                        style={{ background: '#1f2937', color: '#fff', border: '1px solid #4f46e5', padding: '0.5rem', borderRadius: '4px', marginTop: '4px' }}
+                      />
+                    )}
+                  </div>
+
                   <button type="submit" className="train-btn" disabled={isSaving}>
                     {isSaving ? '⏳ Retraining Model...' : resolvingLogIndex !== null ? '⚡ Train & Clear Log' : 'Commit FAQ changes'}
                   </button>
@@ -231,7 +314,6 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
                 </form>
               </div>
 
-            
               <div>
                 <h3>⚠️ Latent Unanswered Inquiries</h3>
                 <div className="logs-table-wrapper" style={{ maxHeight: '150px', overflowY: 'auto', marginTop: '0.5rem' }}>
@@ -254,7 +336,6 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
                 </div>
               </div>
 
-              
               <div>
                 <h3>💬 User Interaction Feedback Logs</h3>
                 <div className="logs-table-wrapper" style={{ maxHeight: '180px', overflowY: 'auto', marginTop: '0.5rem' }}>
@@ -282,7 +363,6 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
               </div>
             </div>
 
-         
             <div className="admin-logs-section" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h3>📁 Active Vector Database Matrix</h3>
@@ -304,14 +384,36 @@ export default function AdminDashboard({ chats = [], onClose }) { // ✅ ACCEPTI
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <input type="text" value={editForm.question} onChange={e => setEditForm({...editForm, question: e.target.value})} style={{ background: '#374151', color: '#fff', border: '1px solid #4b5563', padding: '0.4rem' }} />
                             <textarea value={editForm.answer} onChange={e => setEditForm({...editForm, answer: e.target.value})} rows="2" style={{ background: '#374151', color: '#fff', border: '1px solid #4b5563', padding: '0.4rem' }} />
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem' }}>
-                              <select value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})} style={{ background: '#374151', color: '#fff', padding: '0.2rem' }}>
-                                <option value="General">General</option><option value="Technology">Technology</option><option value="AI Engine">AI Engine</option><option value="UI Design">UI Design</option>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '0.25rem' }}>
+                              
+                              {/* DYNAMIC CATEGORY DROPDOWN - EDIT STATE */}
+                              <select 
+                                value={isCustomCategoryEdit ? 'USER_DEFINED_CUSTOM' : editForm.category} 
+                                onChange={handleEditCategoryDropdownChange} 
+                                style={{ background: '#374151', color: '#fff', padding: '0.4rem', border: '1px solid #4b5563' }}
+                              >
+                                {dynamicCategories.map(cat => (
+                                  <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                                <option disabled>──────────</option>
+                                <option value="USER_DEFINED_CUSTOM">➕ Create New Category...</option>
                               </select>
-                              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                <button onClick={() => handleUpdateFaq(faq.originalIndex)} disabled={isSaving} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '4px', cursor: 'pointer' }}>Save</button>
-                                <button onClick={() => setEditingIndex(null)} style={{ background: '#6b7280', color: '#fff', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
-                              </div>
+
+                              {isCustomCategoryEdit && (
+                                <input 
+                                  type="text" 
+                                  placeholder="Type custom category name..." 
+                                  value={customCategoryEditText} 
+                                  onChange={handleEditCustomTextChange}
+                                  disabled={isSaving}
+                                  style={{ background: '#374151', color: '#fff', border: '1px solid #4f46e5', padding: '0.4rem', borderRadius: '4px' }}
+                                />
+                              )}
+                            </div>
+                            
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
+                              <button onClick={() => handleUpdateFaq(faq.originalIndex)} disabled={isSaving} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '4px', cursor: 'pointer' }}>Save</button>
+                              <button onClick={() => { setEditingIndex(null); setIsCustomCategoryEdit(false); }} style={{ background: '#6b7280', color: '#fff', border: 'none', padding: '0.3rem 0.7rem', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
                             </div>
                           </div>
                         ) : (

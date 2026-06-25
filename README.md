@@ -1,8 +1,8 @@
 # 🤖 AI-Powered Semantic FAQ Desk & Knowledge Retrieval Chatbot
 
-An AI-powered semantic FAQ and knowledge retrieval platform built with **React, Node.js, Express, TensorFlow.js, and Universal Sentence Encoder (USE)**. The system delivers intelligent answers using vector-based semantic similarity instead of traditional keyword matching, providing a smarter and more accurate support experience.
+An AI-powered semantic FAQ and knowledge retrieval platform built with **React, Node.js, Express, TensorFlow.js, and Universal Sentence Encoder (USE)**.
 
-The platform includes semantic search, voice input, multi-threaded conversations, authentication, analytics, feedback tracking, FAQ management, and knowledge base training tools.
+Unlike traditional keyword-based chatbots, this system uses **semantic similarity matching** to understand the meaning of user questions and retrieve the most relevant answers from a knowledge base. The platform includes voice input, multi-threaded conversations, authentication, analytics, feedback monitoring, settings customization, and an administrator dashboard for FAQ management and knowledge base training.
 
 ---
 
@@ -30,15 +30,6 @@ The platform includes semantic search, voice input, multi-threaded conversations
 * Automatic chat title generation
 * User-specific conversation history
 * Persistent chat storage using LocalStorage
-
----
-
-## ⚡ Local Macro Engine
-
-* Local command interception
-* Instant browser-side execution
-* Reduced backend processing overhead
-* Separation of system commands from AI queries
 
 ---
 
@@ -77,7 +68,8 @@ The platform includes semantic search, voice input, multi-threaded conversations
 * Edit FAQs
 * Delete FAQs
 * Search FAQs
-* Category management
+* Dynamic category management
+* Custom user-defined categories
 
 ### Knowledge Base Training
 
@@ -104,12 +96,42 @@ The platform includes semantic search, voice input, multi-threaded conversations
 
 ### Visual Analytics
 
-* Progress-based intent distribution charts
-* Circular model health indicators
 * Live KPI metric cards
 * Confidence score visualization
-* Exportable chat reports
+* Intent distribution analytics
+* Chat activity monitoring
 * Downloadable conversation history
+* Exportable dialogue vault backups
+
+---
+
+## ⚙️ Settings & Customization
+
+### User Preferences
+
+* Dark mode
+* Light mode
+* Persistent theme preferences
+* Settings modal
+* Secure logout functionality
+
+### NLP Similarity Trigger
+
+* Adjustable similarity threshold
+* Precision tuning between loose and strict matching
+* LocalStorage persistence
+
+### Data Portability
+
+* Export chat history as JSON
+* Downloadable dialogue vault backups
+* Offline conversation storage
+
+### Safety Controls
+
+* Interactive empty-state safety locks
+* Disabled actions for unavailable data
+* Visual state indicators
 
 ---
 
@@ -124,7 +146,7 @@ The platform includes semantic search, voice input, multi-threaded conversations
 
 ### Route Protection
 
-* Protected routes
+* Protected admin routes
 * Authentication middleware
 * Token validation
 * Session persistence
@@ -135,28 +157,6 @@ The platform includes semantic search, voice input, multi-threaded conversations
 * Isolated conversation histories
 * Secure feedback storage
 * Protected telemetry records
-
----
-
-## 🎨 User Experience
-
-### Theme System
-
-* Dark mode
-* Light mode
-* Persistent theme preferences
-
-### Settings & Customization
-
-* Settings modal
-* User preference management
-* Secure logout functionality
-
-### Responsive Design
-
-* Mobile-friendly interface
-* Responsive layouts
-* Modern chat experience
 
 ---
 
@@ -190,7 +190,6 @@ The platform includes semantic search, voice input, multi-threaded conversations
 
 ```text
 FAQ-CHATBOT/
-│
 ├── backend/
 │   ├── controllers/
 │   │   └── authController.js
@@ -201,16 +200,20 @@ FAQ-CHATBOT/
 │   │   └── users.json
 │   ├── middleware/
 │   │   └── authMiddleware.js
+│   ├── node_modules/
 │   ├── routes/
 │   │   ├── admin.js
 │   │   └── chat.js
 │   ├── services/
 │   │   └── faqService.js
 │   ├── utils/
+│   │   └── fileHelper.js
+│   ├── package-lock.json
 │   ├── package.json
 │   └── server.js
 │
 ├── frontend/
+│   ├── node_modules/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── AdminDashboard.jsx
@@ -232,8 +235,27 @@ FAQ-CHATBOT/
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── index.html
+│   ├── package-lock.json
 │   ├── package.json
 │   └── vite.config.js
+│
+├── screenshots/
+│   ├── darkmode/
+│   │   ├── analytic_dashboard_0.png
+│   │   ├── analytic_dashboard_1.png
+│   │   ├── chat_page.png
+│   │   ├── dashboard_0.png
+│   │   ├── dashboard_1.png
+│   │   └── settings_page.png
+│   ├── lightmode/
+│   │   ├── analytic_dashboard_0.png
+│   │   ├── analytic_dashboard_1.png
+│   │   ├── chat_page.png
+│   │   ├── dashboard_0.png
+│   │   ├── dashboard_1.png
+│   │   └── settings_page.png
+│   ├── login_page.png
+│   └── register_page.png
 │
 ├── .gitignore
 └── README.md
@@ -241,16 +263,78 @@ FAQ-CHATBOT/
 
 ---
 
+# 📸 Application Screenshots
+
+## Authentication
+
+### Login Page
+
+![Login Page](screenshots/login_page.png)
+
+### Register Page
+
+![Register Page](screenshots/register_page.png)
+
+---
+
+## Light Mode
+
+### Chat Interface
+
+![Chat Page](screenshots/lightmode/chat_page.png)
+
+### Admin Dashboard
+
+![Dashboard](screenshots/lightmode/dashboard_0.png)
+
+![Dashboard](screenshots/lightmode/dashboard_1.png)
+
+### Analytics Dashboard
+
+![Analytics](screenshots/lightmode/analytic_dashboard_0.png)
+
+![Analytics](screenshots/lightmode/analytic_dashboard_1.png)
+
+### Settings Page
+
+![Settings](screenshots/lightmode/settings_page.png)
+
+---
+
+## Dark Mode
+
+### Chat Interface
+
+![Chat Page](screenshots/darkmode/chat_page.png)
+
+### Admin Dashboard
+
+![Dashboard](screenshots/darkmode/dashboard_0.png)
+
+![Dashboard](screenshots/darkmode/dashboard_1.png)
+
+### Analytics Dashboard
+
+![Analytics](screenshots/darkmode/analytic_dashboard_0.png)
+
+![Analytics](screenshots/darkmode/analytic_dashboard_1.png)
+
+### Settings Page
+
+![Settings](screenshots/darkmode/settings_page.png)
+
+---
+
 # ⚙️ AI Workflow
 
-1. User submits a question.
-2. Universal Sentence Encoder generates a vector embedding.
-3. Pre-computed FAQ embeddings are loaded from memory.
-4. Cosine similarity is calculated between vectors.
-5. The highest similarity score is selected.
-6. A confidence score is computed.
-7. If the confidence threshold is met, the matching FAQ answer is returned.
-8. Otherwise, the query is logged as unanswered for administrator review and future training.
+1. User submits a natural language question.
+2. Universal Sentence Encoder generates a dense vector embedding.
+3. Pre-computed FAQ embeddings are parsed from memory.
+4. Cosine similarity is calculated between incoming and stored vectors.
+5. The system filters results against the configured similarity threshold.
+6. The highest confidence match is selected.
+7. If the score meets the threshold, the verified answer is returned.
+8. Otherwise, the query is logged as an unanswered inquiry for administrator review and future training.
 
 ---
 
@@ -290,8 +374,6 @@ npm run dev
 
 # 🌐 Application Access
 
-Open your browser and navigate to:
-
 ```text
 http://localhost:5173
 ```
@@ -305,7 +387,7 @@ Recommended browsers:
 
 # 👩‍💻 Internship Project
 
-Developed as part of a **Web Development Internship Program**, demonstrating:
+Developed as part of a Web Development Internship Program, demonstrating:
 
 * Full-Stack Development
 * React Application Development
@@ -318,7 +400,6 @@ Developed as part of a **Web Development Internship Program**, demonstrating:
 * Responsive UI Design
 * CRUD Operations
 
----
 
 ## ⭐ Highlights
 
@@ -328,13 +409,16 @@ Developed as part of a **Web Development Internship Program**, demonstrating:
 ✅ Voice Recognition Support
 ✅ Multi-Threaded Chat Management
 ✅ Authentication & Session Management
-✅ Admin Dashboard
-✅ Analytics Dashboard
+✅ Admin Dashboard with Analytics
 ✅ FAQ CRUD Operations
+✅ Dynamic Category Management
+✅ Custom User-Defined Categories
 ✅ User Feedback Tracking
 ✅ Suggested Questions Engine
 ✅ Dark/Light Theme Support
+✅ Adjustable NLP Similarity Trigger
+✅ Dialogue Vault Backup Portability
+✅ Exportable Chat History
 ✅ Responsive User Interface
 ✅ Local JSON Database Storage
 ✅ Knowledge Base Training Workflow
-✅ Exportable Chat Reports
