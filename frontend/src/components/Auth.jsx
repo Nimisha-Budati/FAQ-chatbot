@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 export default function Auth({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -7,29 +6,22 @@ export default function Auth({ onAuthSuccess }) {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
     const payload = isLogin ? { email, password } : { email, password, name };
-
     try {
-      // UPDATED: Changed from 5000 to 3000 to perfectly match your backend process port
       const response = await fetch(`http://localhost:3000${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.error || 'Authentication processing failure.');
       }
-
       if (isLogin) {
         onAuthSuccess(data.token, data.user);
       } else {
@@ -43,7 +35,6 @@ export default function Auth({ onAuthSuccess }) {
       setLoading(false);
     }
   };
-
   return (
     <div className="auth-fullscreen-viewport" style={{
       display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -56,13 +47,11 @@ export default function Auth({ onAuthSuccess }) {
         <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: '600' }}>
           {isLogin ? '✨ Welcome Back' : '🚀 Create Account'}
         </h2>
-
         {error && (
           <div style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>
             ⚠️ {error}
           </div>
         )}
-
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {!isLogin && (
             <input
@@ -97,7 +86,6 @@ export default function Auth({ onAuthSuccess }) {
             {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
           </button>
         </form>
-
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: '#aaa' }}>
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <span 

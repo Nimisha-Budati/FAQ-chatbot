@@ -1,20 +1,12 @@
 import React, { useState } from 'react';
-
 export default function AnalyticsDashboard({ chats = [] }) {
-  // ⏳ Time Filter State: 'all' | 'today' | '7days' | 'month'
   const [timeFilter, setTimeFilter] = useState('all');
-
-  // Helper function to check if a timestamp string falls within the selected window
   const isWithinTimeRange = (timestampStr) => {
     if (timeFilter === 'all') return true;
     if (!timestampStr) return false;
-
     const messageDate = new Date(timestampStr);
     const now = new Date();
-    
-    // Normalize times to midnight for clean day-boundary checks
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
     switch (timeFilter) {
       case 'today':
         return messageDate >= startOfToday;
@@ -28,8 +20,6 @@ export default function AnalyticsDashboard({ chats = [] }) {
         return true;
     }
   };
-
-  // 1. Count the filtered user questions
   const totalUserQuestions = chats.reduce((acc, chat) => {
     if (!chat || !chat.messages) return acc;
     const filteredUserMsgs = chat.messages.filter(
@@ -37,8 +27,6 @@ export default function AnalyticsDashboard({ chats = [] }) {
     );
     return acc + filteredUserMsgs.length;
   }, 0);
-
-  // 2. Extract and filter bot responses for AI confidence/category telemetry
   const allBotMessages = chats.reduce((acc, chat) => {
     if (!chat || !chat.messages) return acc;
     const filteredBotMsgs = chat.messages.filter(
@@ -46,17 +34,13 @@ export default function AnalyticsDashboard({ chats = [] }) {
     );
     return [...acc, ...filteredBotMsgs];
   }, []);
-
-  // Track Category Frequencies & Average Confidence Scores
   const categoryCounts = {};
   let totalConfidence = 0;
   let messagesWithConfidence = 0;
-
   allBotMessages.forEach(msg => {
     if (msg.category) {
       categoryCounts[msg.category] = (categoryCounts[msg.category] || 0) + 1;
     }
-
     if (msg.confidence !== undefined && msg.confidence !== null) {
       const rawConfidence = parseFloat(msg.confidence);
       if (!isNaN(rawConfidence)) {
@@ -66,28 +50,20 @@ export default function AnalyticsDashboard({ chats = [] }) {
       }
     }
   });
-
   const avgConfidenceNum = messagesWithConfidence > 0 ? totalConfidence / messagesWithConfidence : 0;
   const avgConfidence = avgConfidenceNum.toFixed(1);
-
-  // Sorted dynamic categories based on user-selected time filters
   const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
-
-  // Count active threads that have at least one message in the selected time frame
   const activeThreadsCount = chats.filter(chat => {
     if (!chat || !chat.messages) return false;
     return chat.messages.some(msg => isWithinTimeRange(msg.timestamp));
   }).length;
-
   return (
     <div className="analytics-dashboard-pane" style={{ padding: '1rem', color: '#fff' }}>
-      
       {/* HEADER SECTION WITH FILTER CONTROL */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '10px' }}>
         <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#4f46e5', fontWeight: '600' }}>
           📈 Personal Session Intelligence
-        </h3>
-        
+        </h3>  
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '0.8rem', color: '#888' }}>Timeframe:</span>
           <select 
@@ -111,34 +87,28 @@ export default function AnalyticsDashboard({ chats = [] }) {
           </select>
         </div>
       </div>
-
       {/* GRID LEVEL 1: HIGHLIGHT CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px', marginBottom: '2rem' }}>
         <div style={{ background: '#16161a', padding: '1rem', borderRadius: '10px', border: '1px solid #2a2a35' }}>
           <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', fontWeight: '600' }}>Queries</span>
           <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#fff' }}>{totalUserQuestions}</p>
         </div>
-
         <div style={{ background: '#16161a', padding: '1rem', borderRadius: '10px', border: '1px solid #2a2a35' }}>
           <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', fontWeight: '600' }}>Avg AI Confidence</span>
           <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{avgConfidence}%</p>
         </div>
-
         <div style={{ background: '#16161a', padding: '1rem', borderRadius: '10px', border: '1px solid #2a2a35' }}>
           <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', fontWeight: '600' }}>Active Threads</span>
           <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#6366f1' }}>{activeThreadsCount}</p>
         </div>
       </div>
-
       {/* GRID LEVEL 2: DETAILED METRICS DISTRIBUTION */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-        
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>      
         {/* Topic Breakdown Bar Listing */}
         <div style={{ background: '#16161a', padding: '1.25rem', borderRadius: '12px', border: '1px solid #2a2a35' }}>
           <h4 style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             🎯 Top Intent Categories
-          </h4>
-          
+          </h4>        
           {sortedCategories.length === 0 ? (
             <p style={{ color: '#6b7280', fontSize: '0.85rem', textAlign: 'center', marginTop: '2.5rem' }}>
               No classified interaction intents found for this timeline window.
@@ -149,7 +119,6 @@ export default function AnalyticsDashboard({ chats = [] }) {
                 const totalBotCount = allBotMessages.length;
                 const percentageNum = totalBotCount > 0 ? (count / totalBotCount) * 100 : 0;
                 const percentageStr = percentageNum.toFixed(0);
-
                 return (
                   <div key={category} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
@@ -172,7 +141,6 @@ export default function AnalyticsDashboard({ chats = [] }) {
             </div>
           )}
         </div>
-
         {/* Confidence Health Gauge */}
         <div style={{ background: '#16161a', padding: '1.25rem', borderRadius: '12px', border: '1px solid #2a2a35', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
@@ -182,8 +150,7 @@ export default function AnalyticsDashboard({ chats = [] }) {
             <p style={{ fontSize: '0.85rem', color: '#888', margin: '0 0 1.5rem 0' }}>
               Reflects mathematical vector similarity metrics calculated across selected interactions.
             </p>
-          </div>
-          
+          </div>          
           <div style={{ textAlign: 'center', paddingBottom: '1rem' }}>
             <div style={{ 
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center', 
@@ -198,7 +165,6 @@ export default function AnalyticsDashboard({ chats = [] }) {
             </p>
           </div>
         </div>
-
       </div>
     </div>
   );

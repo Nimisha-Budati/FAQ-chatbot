@@ -1,20 +1,17 @@
 import fs from 'fs/promises';
 import path from 'path';
-
 export const readJsonFile = async (filePath, defaultValue = []) => {
   try {
     const data = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
     if (error.code === 'ENOENT') {
-      // File does not exist, create it with default value
       await writeJsonFile(filePath, defaultValue);
       return defaultValue;
     }
     throw error;
   }
 };
-
 export const writeJsonFile = async (filePath, data) => {
   try {
     const dir = path.dirname(filePath);

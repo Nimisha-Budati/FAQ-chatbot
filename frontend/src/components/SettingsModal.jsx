@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
-
 export default function SettingsModal({ 
   user, 
   theme, 
   onToggleTheme, 
   onClearChats, 
   onClose,
-  allChats = [] // Pass down your raw conversation data arrays to allow background data backups
+  allChats = []
 }) {
-  // Local state instance for vector match sensitivity (Defaults to 70% matching scale)
   const [similarityThreshold, setSimilarityThreshold] = useState(
     localStorage.getItem('ai_vector_threshold') ? parseFloat(localStorage.getItem('ai_vector_threshold')) * 100 : 70
   );
-
-  // Updates local storage thresholds so the backend/frontend AI matching logic uses it instantly
   const handleThresholdChange = (e) => {
     const val = parseInt(e.target.value);
     setSimilarityThreshold(val);
     localStorage.setItem('ai_vector_threshold', (val / 100).toString());
   };
-
-  // Triggers an automated client-side serialization file download stream
   const handleExportData = () => {
     try {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allChats, null, 2));
@@ -34,14 +28,12 @@ export default function SettingsModal({
       console.error("Failed to generate structural backup layout array:", err);
     }
   };
-
   return (
     <div className="settings-modal-overlay" style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
       background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(6px)',
       display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-    }} onClick={onClose}>
-      
+    }} onClick={onClose}>     
       <div className="settings-modal-card" style={{
         background: theme === 'dark' ? '#141419' : '#ffffff',
         color: theme === 'dark' ? '#f3f4f6' : '#1f2937',
@@ -49,16 +41,13 @@ export default function SettingsModal({
         boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', 
         border: `1px solid ${theme === 'dark' ? '#2a2a35' : '#e5e7eb'}`,
         transition: 'transform 0.2s ease'
-      }} onClick={(e) => e.stopPropagation()}>
-        
+      }} onClick={(e) => e.stopPropagation()}>     
         {/* HEADER SECTION */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: '600', letterSpacing: '-0.025em' }}>⚙️ Client Application Settings</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '1.2rem', opacity: 0.7 }}>✕</button>
         </div>
-
         <hr style={{ borderColor: theme === 'dark' ? '#22222a' : '#f3f4f6', marginBottom: '1.25rem', marginX: 0 }} />
-
         {/* SECTION 1: ACCOUNT CONTEXT PROFILE */}
         <div style={{ marginBottom: '1.25rem' }}>
           <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.05em' }}>Active Account Identity</label>
@@ -67,7 +56,6 @@ export default function SettingsModal({
             <p style={{ margin: 0, fontSize: '0.8rem', color: '#6b7280' }}>{user?.email || 'No email associated'}</p>
           </div>
         </div>
-
         {/* SECTION 2: INTERFACE VIEW MODE */}
         <div style={{ marginBottom: '1.25rem' }}>
           <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.05em' }}>Interface Preference</label>
@@ -96,7 +84,6 @@ export default function SettingsModal({
             </button>
           </div>
         </div>
-
         {/* SECTION 3: VECTOR MATCH ACCURACY SLIDER */}
         <div style={{ marginBottom: '1.25rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -117,7 +104,6 @@ export default function SettingsModal({
             </span>
           </div>
         </div>
-
         {/* SECTION 4: DATA INTEGRITY PORTABILITY MANAGEMENT */}
         <div style={{ marginBottom: '1.5rem' }}>
           <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.05em' }}>Data Portability Sync</label>
@@ -136,7 +122,6 @@ export default function SettingsModal({
             📥 Export Dialogue Vault (.json)
           </button>
         </div>
-
         {/* SECTION 5: DESTRUCTIVE STORAGE DANGER REGION */}
         <div>
           <label style={{ fontSize: '0.75rem', color: '#ef4444', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '0.05em' }}>Destructive Danger Zone</label>
@@ -159,7 +144,6 @@ export default function SettingsModal({
             🗑️ Wipe Local Chat Cache Registers
           </button>
         </div>
-
       </div>
     </div>
   );
